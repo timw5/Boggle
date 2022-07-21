@@ -3,7 +3,9 @@
 <PageTitle>Weather forecast</PageTitle>
 
 @using Boggle.Data
+@using Boggle.Models
 @inject WeatherForecastService ForecastService
+@inject sliceofbreadContext dbcontext
 
 <h1>Weather forecast</h1>
 
@@ -25,6 +27,7 @@ else
             </tr>
         </thead>
         <tbody>
+            @word
             @foreach (var forecast in forecasts)
             {
                 <tr>
@@ -41,8 +44,11 @@ else
 @code {
     private WeatherForecast[]? forecasts;
 
+    private string word;
+
     protected override async Task OnInitializedAsync()
     {
+        word = dbcontext.Words.Select(x => x.Word).First();
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
     }
 }

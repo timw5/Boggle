@@ -1,8 +1,8 @@
 using Boggle.Data;
 using Boggle.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Azure.SignalR;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddSignalR();
-builder.Services.AddDbContext<sliceofbreadContext>();
-
+builder.Services.AddSignalR(x => x.EnableDetailedErrors = true).AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"));
+builder.Services.AddDbContext<sliceofbreadContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

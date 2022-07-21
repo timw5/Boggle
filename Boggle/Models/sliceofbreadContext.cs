@@ -18,11 +18,11 @@ namespace Boggle.Models
         {
         }
 
-        public virtual DbSet<Word> Words { get; set; }
+        public virtual DbSet<Words> Words { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Word>(entity =>
+            modelBuilder.Entity<Words>(entity =>
             {
                 entity.Property(e => e.ID).ValueGeneratedNever();
             });
