@@ -3,6 +3,7 @@ using Boggle.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Azure.SignalR;
 using Microsoft.AspNetCore.Builder;
+using Boggle.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,5 +30,5 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
+app.MapHub<BoggleHub>("/bogglehub");
 app.Run();
