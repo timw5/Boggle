@@ -3,7 +3,6 @@
 <PageTitle>Weather forecast</PageTitle>
 
 @using Boggle.Data
-@using Boggle.Models
 @inject WeatherForecastService ForecastService
 @inject sliceofbreadContext dbcontext
 
@@ -44,11 +43,11 @@ else
 @code {
     private WeatherForecast[]? forecasts;
 
-    private string word;
+    private string? word;
 
     protected override async Task OnInitializedAsync()
     {
-        word = dbcontext.Words.Select(x => x.Word).First();
+        word = await dbcontext.Words.Select(x => x.Word).FirstOrDefaultAsync();
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
     }
 }
