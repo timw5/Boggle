@@ -1,4 +1,5 @@
 using Boggle.Data;
+using Boggle.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR;
@@ -10,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSignalR();
-//builder.Services.AddDbContext<BoggleContext>();
+builder.Services.AddDbContext<sliceofbreadContext>();
 
 var app = builder.Build();
 
@@ -23,11 +24,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseWebSockets();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

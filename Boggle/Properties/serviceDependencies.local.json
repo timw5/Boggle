@@ -9,6 +9,18 @@
       "type": "signalr.azure",
       "connectionId": "Azure:SignalR:ConnectionString",
       "dynamicId": null
+    },
+    "compute.appService1": {
+      "group": "connections",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/sliceofbread",
+      "type": "compute.appService.windows"
+    },
+    "mssql1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/sliceofbread/databases/sliceofbread",
+      "type": "mssql.azure",
+      "connectionId": "dbconn",
+      "dynamicId": null
     }
   }
 }
