@@ -38,12 +38,27 @@ else
             }
         </tbody>
     </table>
+   <div class="container">
+        @foreach(var row in board.BoggleBoard)
+        {
+            <div class="row">
+                @foreach(var character in row)
+                {
+                    <div class="col-md-1">
+                        @character
+                    </div>
+                }
+            </div>
+        }
+
+   </div>
 }
 
-@code {
-    private WeatherForecast[]? forecasts;
+            @code {
+        private WeatherForecast[]? forecasts;
 
-    private string? word;
+        private string? word;
+        public Board board = new Board();
 
     protected override async Task OnInitializedAsync()
     {
