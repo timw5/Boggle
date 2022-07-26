@@ -1,0 +1,45 @@
+﻿@page "/JoinGame"
+
+<PageTitle>Join Game</PageTitle>
+
+<div class="container m-2">
+    <div class="row text-center mb-4 mt-4 mx-auto shadow-lg w-25 rounded-pill border-5 p-4">
+        <h2>Play a Game:</h2>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4 container p-4 shadow-lg border rounded-3">
+            <h2 class="mb-4 text-center">New:</h2>
+            <br />
+            <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping">User:</span>
+                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+            </div>
+            <br />
+            <input type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="New Game"/>
+        </div>
+        <div class="col-md-4 container p-4 shadow-lg border rounded-3">
+            <h2 class="mb-4 text-center">Join:</h2>
+            <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping">User:</span>
+                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+            </div>
+            <div class="input-group flex-nowrap mt-2">
+                  <span class="input-group-text" id="addon-wrapping">MeetingID:</span>
+                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+            </div>
+            <input type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="Join Game"/>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+@code {
+    public Board board = new Board();
+}
