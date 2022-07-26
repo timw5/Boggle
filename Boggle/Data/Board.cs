@@ -76,7 +76,7 @@
             int counter = 0;
             char[] temp = new char[4];
             //fill a vowel somewhere in the row:
-            while (counter < 3) 
+            while (counter < 4) 
             {
                 var tempvowels = Vowels;
                 var tempconstants = Constants;
@@ -89,7 +89,7 @@
                     temp[order[counter++]] = vowel;
                     tempvowels[vowel]++;
                 }
-                if (Constants[constant] < 2)
+                if (Constants[constant] < 2 && counter < 4)
                 {
                     temp[order[counter++]] = constant;
                     tempconstants[constant]++;
@@ -98,9 +98,6 @@
                 {
                     continue;
                 }
-               
-                
-
             }
 
             row = temp.ToList<char>();
