@@ -1,4 +1,4 @@
-﻿namespace Boggle.Data
+﻿namespace Boggle.Models
 {
     public class Board
     {
@@ -22,15 +22,15 @@
         public List<char> row4;
         public List<List<char>> BoggleBoard;
         private Dictionary<char, int> Vowels = new Dictionary<char, int>
-        { 
+        {
             {'A', 0},
             {'E', 0},
             {'I', 0},
             {'O', 0},
-            {'U', 0} 
+            {'U', 0}
         };
         private Dictionary<char, int> Constants = new Dictionary<char, int>
-        { 
+        {
             {'B', 0},
             {'C', 0},
             {'D', 0},
@@ -66,7 +66,7 @@
             }
             return order;
         }
-        
+
         //still a work in progress, but it works for now.
         private List<char> fillRow()
         {
@@ -75,8 +75,7 @@
             List<char> row = new List<char>();
             int counter = 0;
             char[] temp = new char[4];
-            //fill a vowel somewhere in the row:
-            while (counter < 4) 
+            while (counter < 4)
             {
                 var tempvowels = Vowels;
                 var tempconstants = Constants;
@@ -84,7 +83,7 @@
                 char vowel = tempvowels.Keys.ElementAt(vr);
                 int cr = rand.Next(0, 21);
                 char constant = Constants.Keys.ElementAt(cr);
-                if(Vowels[vowel] < 3)
+                if (Vowels[vowel] < 3)
                 {
                     temp[order[counter++]] = vowel;
                     tempvowels[vowel]++;
@@ -100,7 +99,7 @@
                 }
             }
 
-            row = temp.ToList<char>();
+            row = temp.ToList();
             return row;
         }
     }
