@@ -1,4 +1,4 @@
-﻿namespace Boggle.Models
+﻿    namespace Boggle.Models
 {
     public class Game
     {
@@ -13,14 +13,62 @@
         public List<Player> Players { get; set; }
         public Player? Winner { get; set; }
         public sliceofbreadContext db { get; set; }
-        public bool IsWord(string word)
+        public bool IsWord(string word, int index)
         {
             var temp = db.Words.Where(w => w.Word.ToLower() == word.ToLower()).FirstOrDefault();
             if (temp == null)
             {
                 return false;
             }
+            AddScore(word);
             return true;
+        }
+
+        public void IsWinner()
+        {
+            if (Players[0].Score > Players[1].Score)
+            {
+                Winner = Players[0];
+            }
+            else
+            {
+                Winner = Players[1];
+            }
+
+        }
+
+        public int AddScore(string word)
+        {
+            int length = word.Length;
+            
+            if (length == 3)
+            {
+                return 1;
+            }
+            else if(length == 4)
+            {
+                return 2;
+            }
+            else if (length == 5)
+            {
+                return 4;
+            }
+            else if (length == 6)
+            {
+                return 6;
+            }
+            else if (length == 7)
+            {
+                return 8;
+            }
+            else if (length == 8)
+            {
+                return 10;
+            }
+            else
+            {
+                return 15;
+            }
         }
         public void AddPlayer(User user)
         {
