@@ -1,0 +1,62 @@
+﻿@page "/Game"
+
+<link rel="stylesheet" type="text/css" href="StyleSheet.css">
+
+    <section id="game">
+        <header>
+            <h3>Boggle</h3>
+        </header>
+<section id="dice-grid">
+            <div class="dice">
+                <button class="letter">a</button>
+                <button class="letter">b</button>
+                <button class="letter">c</button>
+                <button class="letter">d</button>
+                <button class="letter">e</button>
+                <button class="letter">f</button>
+                <button class="letter">g</button>
+                <button class="letter">h</button>
+                <button class="letter">i</button>
+                <button class="letter">j</button>
+                <button class="letter">k</button>
+                <button class="letter">l</button>
+                <button class="letter">m</button>
+                <button class="letter">n</button>
+                <button class="letter">o</button>
+                <button class="letter">p</button>
+            </div>
+        </section>
+
+        <div class="opponent stats">
+            <div>Opponent's Username:</div>
+            <div>""</div>
+            <div>Opponent's Score:</div>
+            <div>0</div>
+        </div>
+
+        <section id="word-info">
+            <div id="word-holder">
+                <h5>Current Word:</h5>
+                <p id="current-word"></p>
+            </div>
+            <button id="submit-btn">Submit Word</button>
+        </section>
+        <table id="score-table">
+            <tr>
+                <th>Word</th>
+                <th>Score</th>
+            </tr>
+            <tr>
+                <td>Total:</td>
+                <td id="total-points">0</td>
+            </tr>
+        </table>
+    </section>
+
+@code {
+    public void clickMe()
+    {
+
+        return;
+    }
+} 
