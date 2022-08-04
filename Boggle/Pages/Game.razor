@@ -6,28 +6,24 @@
 
 <link rel="stylesheet" type="text/css" href="StyleSheet.css">
 
+
     <section id="game">
         <header>
             <h3>Boggle</h3>
         </header>
-<section id="dice-grid">
+        
+        <section id="dice-grid">
             <div class="dice">
-                <button class="letter">a</button>
-                <button class="letter">b</button>
-                <button class="letter">c</button>
-                <button class="letter">d</button>
-                <button class="letter">e</button>
-                <button class="letter">f</button>
-                <button class="letter">g</button>
-                <button class="letter">h</button>
-                <button class="letter">i</button>
-                <button class="letter">j</button>
-                <button class="letter">k</button>
-                <button class="letter">l</button>
-                <button class="letter">m</button>
-                <button class="letter">n</button>
-                <button class="letter">o</button>
-                <button class="letter">p</button>
+            @foreach (var row in b.BoggleBoard)
+            {
+                @foreach(var item in row)
+                {
+                    //callback event: "btnClick(item)"
+                    //void "() => btnClick(item)"
+                    <button @onclick="() => btnClick(item)" class="letter" value="@item">@item</button>
+                }
+                 
+            }
             </div>
         </section>
 
@@ -56,10 +52,16 @@
             </tr>
         </table>
     </section>
-
+    
 @code {
-    public void clickMe()
+
+
+    Board b = new Board();
+
+
+    public void btnClick(char a)
     {
+        js.InvokeVoidAsync("alert", a);
 
         return;
     }
