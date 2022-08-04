@@ -1,4 +1,4 @@
-using Boggle.Data;
+
 using Boggle.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Azure.SignalR;
@@ -9,8 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+//builder.Services.AddServerSideBlazor();
 builder.Services.AddSignalR(x => x.EnableDetailedErrors = true).AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"));
 builder.Services.AddDbContext<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
@@ -28,7 +27,7 @@ app.UseHttpsRedirection();
 app.UseWebSockets();
 app.UseStaticFiles();
 app.UseRouting();
-app.MapBlazorHub();
+//app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapHub<BoggleHub>("/bogglehub");
 app.Run();
