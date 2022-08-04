@@ -1,31 +1,51 @@
-﻿using Microsoft.Azure.SignalR;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Boggle.Models;
-using AutoMapper;
 
 namespace Boggle.Hubs
 {
-    public class BoggleHub: Hub
+    public class BoggleHub : Hub
     {
         private static List<Game> Games = new List<Game>();
-        private static List<User> Users = new List<User>();
-        private readonly IMapper Mapper;
+        private static List<Boggle.Models.User> Users = new List<User>();
+        private static sliceofbreadContext? sliceofbreadContext;
+        public const string HubURL = "/Game";
 
-        public BoggleHub(IMapper mapper)
+        public void AddToGroup(string conn, string name)
         {
-            Mapper = mapper;
-        }   
+            Groups.AddToGroupAsync(conn, name);
+
+        }
+
         public override async Task OnConnectedAsync()
         {
-            await base.OnConnectedAsync();
-        }
-        
-        public void AddUser(string name)
-        {
-            var user = new User(Context.ConnectionId, name);
-            Users.Add(user);
+            sliceofbreadContext = new sliceofbreadContext();
+            await Clients.Caller.SendAsync("GetConnectionID", this.Context.ConnectionId);
         }
 
-        
+        public override async Task OnDisconnectedAsync(Exception? e)
+        {
+            await base.OnDisconnectedAsync(e);
+        }
+
+        public string GetConnectionID()
+        {
+            return Context.ConnectionId;
+        }
+
+        public bool AddUserToGroup(string connectionID)
+        {
+            int numberOfPlayersInGroup = 0;
+
+            Groups.AddToGroupAsync(connectionID, "group1");
+            if (numberOfPlayersInGroup < 2)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+
+
     }
 }

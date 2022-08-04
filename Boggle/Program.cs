@@ -10,9 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 //builder.Services.AddServerSideBlazor();
-builder.Services.AddSignalR(x => x.EnableDetailedErrors = true).AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"));
 builder.Services.AddDbContext<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
+
+if (builder.Environment.IsDevelopment()) {
+    builder.Services.AddSignalR(x => x.EnableDetailedErrors = true)
+    .AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"))
+    .AddAzureSignalR(options => options.ConnectionCount = 2);
+}
+else
+{
+    builder.Services.AddSignalR(x => x.EnableDetailedErrors = true)
+    .AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"));
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
