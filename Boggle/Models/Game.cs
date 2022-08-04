@@ -20,7 +20,6 @@
             {
                 return false;
             }
-            AddScore(word);
             return true;
         }
 
@@ -37,7 +36,7 @@
 
         }
 
-        public int AddScore(string word)
+        public static int AddScore(string word)
         {
             int length = word.Length;
             
@@ -88,6 +87,7 @@
         public void EndGame()
         {
             GameStarted = false;
+            IsWinner();
             Players.Clear();
         }
     }

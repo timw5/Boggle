@@ -1,14 +1,7 @@
-﻿@inject IJSRuntime JS
-@page "/Game"
+﻿@page "/Game"
 
 <h3>Game</h3>
 
-<button @onclick="click">Click Me</button>
-
 @code {
 
-    async Task click()
-    {
-        await JS.InvokeVoidAsync("clicked");
-    }
 }
