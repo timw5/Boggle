@@ -9,13 +9,6 @@
 
 <environment include="Development">
     <script>
-        //For Hot Reload
-        //dotnet watch run debug
-        window.Blazor.defaultReconnectionHandler.onConnectionDown = function ()
-        {
-            setTimeout(function () {
-            location.reload();
-            }, 30000);
-        };
+
     </script>
 </environment>
