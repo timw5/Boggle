@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boggle", "Boggle\Boggle.csproj", "{16F16257-D016-4CB7-A9A3-1B0A8A0AB731}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boggle", "Boggle\Boggle.csproj", "{16F16257-D016-4CB7-A9A3-1B0A8A0AB731}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
