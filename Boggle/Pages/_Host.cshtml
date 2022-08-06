@@ -7,3 +7,16 @@
 <component type="typeof(App)" render-mode="ServerPrerendered" />
 <script src="~/js/JavaScript.js"></script>
 <script src="_framework/blazor.server.js"></script>
+<script src="jquery/jquery.js"> </script>
+<script>
+    function getAll(id) {
+        if (document.getElementById(id).style.backgroundColor == 'red') {
+            document.getElementById(id).style.backgroundColor = 'white';         
+        }
+
+        else {
+            document.getElementById(id).style.backgroundColor = 'red';
+        }
+    }
+     
+</script>

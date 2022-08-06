@@ -2,6 +2,8 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager navman
 @inject IJSRuntime js
+@implements IDisposable
+@inject IDbContextFactory<sliceofbreadContext> dbFactory
 
 
 <link rel="stylesheet" type="text/css" href="StyleSheet.css">
@@ -14,16 +16,24 @@
         
         <section id="dice-grid">
             <div class="dice">
+                
             @foreach (var row in b.BoggleBoard)
             {
                 @foreach(var item in row)
                 {
+
                     //callback event: "btnClick(item)"
                     //void "() => btnClick(item)"
-                    <button @onclick="() => btnClick(item)" class="letter" value="@item">@item</button>
+                    string id = item + count++.ToString();
+                    if(!dict.Keys.Contains(id))
+                    {
+                        dict.Add(id, false);
+                    }
+                    <button @onclick="() => btnClick(id)" id="@id" class="letter" value="@item">@item</button>
                 }
                  
             }
+
             </div>
         </section>
 
@@ -55,13 +65,84 @@
     
 @code {
 
-
-    Board b = new Board();
-
-
-    public void btnClick(char a)
+    public void Dispose()
     {
-        js.InvokeVoidAsync("alert", a);
+        Context?.Dispose();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Busy = true;
+        try
+        {
+            Context = dbFactory.CreateDbContext();
+        }
+        finally
+        {
+            Busy = false;
+        }
+
+        await base.OnInitializedAsync();
+        g = new(new GameSetup("123",10), Context);
+
+    }
+
+    bool Busy;
+    Board b = new Board();
+    sliceofbreadContext? Context;
+    Models.Game? g;
+    public static string CurrWordSelected = "";
+    public Dictionary<string, bool> dict = new();
+    int count = 0;
+
+    public void btnClick(string a)
+    {
+        count = 0;
+        char selected = a[0];
+
+        if(dict[a] is true)
+        {
+            if(g.IsWord(CurrWordSelected))
+            {
+                Models.Game.AddScore(CurrWordSelected);
+                CurrWordSelected = "";
+                foreach (var item in dict.Keys)
+                {
+                    if(dict[item])
+                    {
+                        dict[item] = false;
+                        js.InvokeVoidAsync("getAll", item);
+                        StateHasChanged();
+                    }
+                }
+                StateHasChanged();
+
+            }
+            else
+            {
+                Task.Run(() => js.InvokeVoidAsync("alert", "Not a word!"));
+                CurrWordSelected = "";
+
+                foreach(var item in dict.Keys)
+                {
+                    if(dict[item])
+                    {
+                        dict[item] = false;
+                        js.InvokeVoidAsync("getAll", item);
+                        StateHasChanged();
+                    }   
+                }
+            }
+        }
+        else
+        {
+            CurrWordSelected += selected; 
+            js.InvokeVoidAsync("getAll", a);
+            dict[a] = true;
+            StateHasChanged();
+        }
+
+
 
         return;
     }

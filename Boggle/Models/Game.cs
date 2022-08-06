@@ -1,28 +1,32 @@
-﻿    namespace Boggle.Models
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+
+namespace Boggle.Models
 {
     public class Game
     {
-        public Game(GameSetup setup)
+        public Game(GameSetup setup, sliceofbreadContext df)
         {
             Setup = setup;
             Players = new();
-            db = new();//access db with db.words....;
+            db = df;
         }
         public GameSetup Setup { get; }
         public bool GameStarted { get; set; }
         public List<Player> Players { get; set; }
         public Player? Winner { get; set; }
         public sliceofbreadContext db { get; set; }
-        public bool IsWord(string word, int index)
+        public bool IsWord(string word)
         {
-            var temp = db.Words.Where(w => w.Word.ToLower() == word.ToLower()).FirstOrDefault();
-            if (temp == null)
+            var temp = Task.Run(() =>db.Words.Where(w => w.Word.ToLower() == word.ToLower()).FirstOrDefaultAsync());
+            if (temp.Result == null)
             {
                 return false;
             }
             return true;
         }
 
+        
         public void IsWinner()
         {
             if (Players[0].Score > Players[1].Score)

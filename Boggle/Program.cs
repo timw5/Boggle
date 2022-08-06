@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddDbContext<sliceofbreadContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
-
+builder.Services.AddDbContextFactory<sliceofbreadContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("db"))
+);
 if (builder.Environment.IsDevelopment()) {
     builder.Services.AddSignalR(x => x.EnableDetailedErrors = true)
     .AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"))
@@ -33,7 +33,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseWebSockets();
 app.UseStaticFiles();
