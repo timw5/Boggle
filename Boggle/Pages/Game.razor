@@ -16,7 +16,7 @@
                     @foreach(var item in row)
                     {
                         //callback event: "btnClick(item)"
-                        //void "() => btnClick(item)"
+                        //void: "() => btnClick(item)"
                         string id = item + Count++.ToString();
                         if(!dict.Keys.Contains(id))
                         {
@@ -56,10 +56,10 @@
     
 @code {
 
-    public void Dispose()
-    {
-        Context?.Dispose();
-    }
+        public void Dispose()
+        {
+            Context?.Dispose();
+        }
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,7 +112,7 @@
         {
             if (dict[a] is true)
             {
-                if (await Task.Run(() => g.IsWord(CurrWordSelected)))
+                if (await Task<bool>.Run(() => g.IsWord(CurrWordSelected)))
                 {
                     Models.Game.AddScore(CurrWordSelected);
                     CurrWordSelected = "";
@@ -142,9 +142,8 @@
             }
             else
             {
-
                 CurrWordSelected += selected;
-                await js.InvokeVoidAsync("getAll", a);
+                await Task.Run(() => js.InvokeVoidAsync("getAll", a));
                 dict[a] = true;
                 GetValidSelections(id);
             }

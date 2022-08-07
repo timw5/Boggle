@@ -16,14 +16,10 @@ namespace Boggle.Models
         public List<Player> Players { get; set; }
         public Player? Winner { get; set; }
         public sliceofbreadContext db { get; set; }
-        public bool IsWord(string word)
+        public async Task<bool> IsWord(string word)
         {
-            var temp = Task.Run(() =>db.Words.Where(w => w.Word.ToLower() == word.ToLower()).FirstOrDefaultAsync());
-            if (temp.Result == null)
-            {
-                return false;
-            }
-            return true;
+            //var test = word.ToLower();
+            return await Task.Run(() => db.Words.Any(x => x.Word == word));
         }
 
         
