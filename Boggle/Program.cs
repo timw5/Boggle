@@ -13,16 +13,13 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContextFactory<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db"))
 );
-if (builder.Environment.IsDevelopment()) {
-    builder.Services.AddSignalR(x => x.EnableDetailedErrors = true)
-    .AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"))
-    .AddAzureSignalR(options => options.ConnectionCount = 2);
-}
-else
+builder.Services.AddSignalR();
+if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddSignalR(x => x.EnableDetailedErrors = true)
     .AddAzureSignalR(builder.Configuration.GetConnectionString("signalR"));
 }
+
 
 var app = builder.Build();
 
@@ -38,6 +35,7 @@ app.UseWebSockets();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
 app.MapHub<BoggleHub>("/bogglehub");
+app.MapFallbackToPage("/_Host");
+
 app.Run();
