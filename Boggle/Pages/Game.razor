@@ -9,6 +9,7 @@
         <header>
             <h3>Boggle</h3>
         </header>      
+        <div class="board">
         <section id="dice-grid">
             <div class="dice">
                 @foreach (var row in b.BoggleBoard)
@@ -28,11 +29,12 @@
             </div>
         </section>
 
-        <div class="opponent stats">
-            <div>Opponent's Username:</div>
-            <div>""</div>
-            <div>Opponent's Score:</div>
-            <div>0</div>
+        <div class="opponent_stats">
+                <div>Opponent's Username:</div>
+                <div>""</div>
+                <div>Opponent's Score:</div>
+                <div>0</div>
+            </div>
         </div>
 
         <section id="word-info">
