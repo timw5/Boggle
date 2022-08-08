@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager navman
 @inject IJSRuntime js
+@inject User usr
 @implements IDisposable
 @inject IDbContextFactory<sliceofbreadContext> dbFactory
 
@@ -56,10 +57,10 @@
     
 @code {
 
-        public void Dispose()
-        {
-            Context?.Dispose();
-        }
+    public void Dispose()
+    {
+        Context?.Dispose();
+    }
 
     protected override async Task OnInitializedAsync()
     {

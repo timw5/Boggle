@@ -31,17 +31,11 @@ namespace Boggle.Hubs
         {
             return Context.ConnectionId;
         }
-
-        public bool AddUserToGroup(string connectionID)
+        
+        public void AddUserToGroup(User usr)
         {
-            int numberOfPlayersInGroup = 0;
-
-            Groups.AddToGroupAsync(connectionID, "group1");
-            if (numberOfPlayersInGroup < 2)
-            {
-                return false;
-            }
-            return true;
+            Groups.AddToGroupAsync(usr.ConnectionID, "group1");
+            Users.Add(usr);
         }
 
 

@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<User>();
 builder.Services.AddDbContextFactory<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db"))
 );
@@ -35,7 +36,7 @@ app.UseWebSockets();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapBlazorHub();
-app.MapHub<BoggleHub>("/bogglehub");
+app.MapHub<BoggleHub>("/BoggleHub");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

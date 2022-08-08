@@ -1,4 +1,10 @@
 ﻿@page "/JoinGame"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager navman
+@inject User usr
+@inject IJSRuntime js
+@implements IDisposable
+@inject IDbContextFactory<sliceofbreadContext> dbFactory
 
 <PageTitle>Join Game</PageTitle>
 
@@ -12,10 +18,10 @@
             <br />
             <div class="input-group flex-nowrap">
                   <span class="input-group-text" id="addon-wrapping">User:</span>
-                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+                  <input @bind="name" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
             </div>
             <br />
-            <input type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="New Game"/>
+            <input @onclick="OnClick" type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="New Game"/>
         </div>
         <div class="col-md-4 container p-4 shadow-lg border rounded-3">
             <h2 class="mb-4 text-center">Join:</h2>
@@ -35,5 +41,39 @@
 
 
 @code {
-    public Board board = new Board();
+    string passcode = "";
+    HubConnection hub;
+    sliceofbreadContext? Context;
+    public string name = "";
+
+    public async void OnClick()
+    {
+        usr.ConnectionID = hub.ConnectionId;
+        usr.Name = name;
+        usr.hub = this.hub;
+        navman.NavigateTo("/GameLobby");
+    }
+
+
+    public void Dispose()
+    {
+        Context?.Dispose();
+    }
+    
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        hub = new HubConnectionBuilder()
+        .WithUrl(navman.ToAbsoluteUri("/BoggleHub"))
+            .WithAutomaticReconnect()
+            .Build();   
+        await Task.Run(() =>hub.StartAsync());
+
+
+        await base.OnInitializedAsync();
+    }
+    
+
 }
