@@ -3,25 +3,24 @@
 @inject NavigationManager navman
 @inject User usr
 @inject IJSRuntime js
-@implements IDisposable
 @inject IDbContextFactory<sliceofbreadContext> dbFactory
 
 <h3>GameLobby</h3>
+<h1>  @passcode</h1>
 <button @onclick="click" class="btn btn-primary @disabled"> connstring</button>
 
 
 
 @code {
 
-
-    public sliceofbreadContext Context;
-    public string disabled = " ";
+    public sliceofbreadContext? Context;
+    public string disabled = "disabled";
     string passcode = "";
     HubConnection? hub;
 
     protected override async Task OnInitializedAsync() {
 
-        var x = await usr.hub.InvokeAsync<string>("GetConnectionID");
+        passcode = usr.password;
 
         await base.OnInitializedAsync();
     }
@@ -31,10 +30,6 @@
         await js.InvokeVoidAsync("alert", (string)await usr.hub.InvokeAsync<string>("GetConnectionID"));
     }
 
-    public void Dispose()
-    {
-        Context.Dispose();
-    }
 
 
 

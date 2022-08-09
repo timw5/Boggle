@@ -7,14 +7,9 @@ namespace Boggle.Hubs
     {
         private static List<Game> Games = new List<Game>();
         private static List<Boggle.Models.User> Users = new List<User>();
+        private static Dictionary<string, int> groups = new Dictionary<string, int>();
         private static sliceofbreadContext? sliceofbreadContext;
         public const string HubURL = "/Game";
-
-        public void AddToGroup(string conn, string name)
-        {
-            Groups.AddToGroupAsync(conn, name);
-
-        }
 
         public override async Task OnConnectedAsync()
         {
@@ -26,19 +21,49 @@ namespace Boggle.Hubs
         {
             await base.OnDisconnectedAsync(e);
         }
-
-        public string GetConnectionID()
-        {
-            return Context.ConnectionId;
-        }
         
-        public void AddUserToGroup(User usr)
+        public void AddUserToGroup(string connID, string name, string password)
         {
-            Groups.AddToGroupAsync(usr.ConnectionID, "group1");
+            Groups.AddToGroupAsync(connID, password);
+            User usr = new User();
+            usr.ConnectionID = connID;
+            usr.ConnectedOn = DateTime.Now;
+            usr.Name = name;
+            usr.password = password;
             Users.Add(usr);
+            if(FindGroup(password)) {
+                groups[password]++;
+            }
+            else
+            {
+                groups.Add(password, 1);
+            }  
         }
 
+        public bool FindGroup(string password)
+        {
+            if (groups.ContainsKey(password))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
+        }
+
+        public string GeneratePassword()
+        {
+            Random rand = new Random();
+            string password = "";
+            for(int i = 0; i < 8; i++)
+            {
+                int randomletter = rand.Next(65, 90);
+                password += (char)randomletter;
+            }
+            return password;
+        }
 
 
     }

@@ -20,6 +20,8 @@ namespace Boggle.Models
         public string? Name { get; set; }
         public DateTime ConnectedOn { get; set; }
         public HubConnection? hub { get; set; }
+        public string? password { get; set; }
+        public string? GroupName { get; set; }
 
 
     }

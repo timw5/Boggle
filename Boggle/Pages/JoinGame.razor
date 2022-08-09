@@ -3,8 +3,6 @@
 @inject NavigationManager navman
 @inject User usr
 @inject IJSRuntime js
-@implements IDisposable
-@inject IDbContextFactory<sliceofbreadContext> dbFactory
 
 <PageTitle>Join Game</PageTitle>
 
@@ -21,17 +19,17 @@
                   <input @bind="name" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
             </div>
             <br />
-            <input @onclick="OnClick" type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="New Game"/>
+            <input @onclick="OnClickNewGame" type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="New Game"/>
         </div>
         <div class="col-md-4 container p-4 shadow-lg border rounded-3">
             <h2 class="mb-4 text-center">Join:</h2>
             <div class="input-group flex-nowrap">
                   <span class="input-group-text" id="addon-wrapping">User:</span>
-                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+                  <input @bind="name" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
             </div>
             <div class="input-group flex-nowrap mt-2">
                   <span class="input-group-text" id="addon-wrapping">MeetingID:</span>
-                  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+                  <input @bind="passcode" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
             </div>
             <input type="button" class="btn btn-sm btn-primary mt-4 mb-2 mx-auto" value="Join Game"/>
         </div>
@@ -41,25 +39,33 @@
 
 
 @code {
+    
     string passcode = "";
-    HubConnection hub;
-    sliceofbreadContext? Context;
+    HubConnection? hub;
     public string name = "";
+    
 
-    public async void OnClick()
+    public async void OnClickNewGame()
     {
         usr.ConnectionID = hub.ConnectionId;
         usr.Name = name;
         usr.hub = this.hub;
+        usr.password = await Task.Run(() => usr.hub.InvokeAsync<string>("GeneratePassword"));
+        await Task.Run(() => usr.hub.InvokeAsync("AddUserToGroup", usr.ConnectionID, usr.Name, usr.password));
+        navman.NavigateTo("/GameLobby");
+    }
+    
+    
+    public async void OnClickJoinGame()
+    {
+        usr.ConnectionID = hub.ConnectionId;
+        usr.Name = name;
+        usr.hub = this.hub;
+        
+        await Task.Run(() => usr.hub.InvokeAsync("AddUserToGroup", usr.ConnectionID, usr.Name, usr.password));
         navman.NavigateTo("/GameLobby");
     }
 
-
-    public void Dispose()
-    {
-        Context?.Dispose();
-    }
-    
 
 
     protected override async Task OnInitializedAsync()
