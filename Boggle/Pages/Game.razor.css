@@ -14,8 +14,7 @@ header {
     padding: 10px;
     width: 415px;
     height: 425px;
-    margin-left: 405px;
-    margin-right: 50px;
+    margin-left: 33%;
     margin-top: 0;
     margin-bottom: 0;
     background-color: #061fc6;
@@ -39,7 +38,7 @@ header {
     width: 20%;
     margin-top: 150px;
     margin-bottom: 10px;
-    //margin-right: auto;
+    margin-left: 50px;
     box-shadow: inset 3px 3px 10px rgba(0,0,0,.3), inset -3px -3px 10px rgba(255,255,255,.3);
     height: 90%;
     border-radius: 24px;
@@ -63,3 +62,49 @@ header {
 .selected {
     background-color: #f5f15c
 }
+
+#word-info {
+    margin: 10px;
+    margin-left: 27%;
+    display: flex;
+}
+
+#submit-btn {
+    //float: right;
+    margin: 10px;
+    margin-left: 300px;
+    height: 30px;
+    width: 150px;
+    text-align:center;
+}
+
+#score-table {
+    width: 40%;
+    outline: 3px solid #061fc6;
+    margin-left: 30%;
+    margin-top: 20px;
+    border-spacing: 0;
+}
+    tr,
+    th
+{
+    text-align: left;
+}
+
+th, td {
+    padding: 2px;
+    margin: 0;
+    border-bottom: 3px solid #061fc6;
+    background-color: #fff;
+}
+
+    th:first-child,
+    td:first-child {
+        width: 70%;
+    }
+
+    th:last-child,
+    td:last-child {
+        width: 30%;
+        border-left: 3px solid #061fc6;
+    }
