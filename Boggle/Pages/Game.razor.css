@@ -108,3 +108,7 @@ th, td {
         width: 30%;
         border-left: 3px solid #061fc6;
     }
+
+    .time {
+        text-align:center;
+    }
