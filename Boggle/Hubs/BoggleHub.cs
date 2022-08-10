@@ -22,23 +22,84 @@ namespace Boggle.Hubs
             await base.OnDisconnectedAsync(e);
         }
         
-        public void AddUserToGroup(string connID, string name, string password)
+        public Dictionary<string, string> GetUserInfo(string connID)
         {
-            Groups.AddToGroupAsync(connID, password);
-            User usr = new User();
-            usr.ConnectionID = connID;
-            usr.ConnectedOn = DateTime.Now;
-            usr.Name = name;
-            usr.password = password;
-            Users.Add(usr);
-            if(FindGroup(password)) {
-                groups[password]++;
+            var mydict = new Dictionary<string, string>();
+            var temp = Users.Where(x => x.ConnectionID == connID).First();
+            mydict.Add("name", temp.Name);
+            mydict.Add("Password", temp.password);
+            return mydict;
+        }
+        
+        public void ImReady(string name)
+        {
+            Users.Where(x => x.Name == name).FirstOrDefault().ready = true;
+        }
+        
+        
+        public bool ready(string password, string name)
+        {
+            int count = 0;
+
+            foreach (var user in Users)
+            {
+                if (user.password == password)
+                {
+                    if (user.ready == true)
+                    {
+                        count++;
+                        
+                    }
+                }
+            }
+            bool result = count == 2;
+            return count == 2;
+        }
+        
+        public bool AddUserToGroup(string connID, string name, string password, bool joining)
+        {
+
+            if (!joining)
+            {
+                User usr = new User();
+                usr.ConnectionID = connID;
+                usr.ConnectedOn = DateTime.Now;
+                usr.Name = name;
+                usr.password = password;
+                Users.Add(usr);
+                groups.Add(password, 1);
+                Groups.AddToGroupAsync(connID, password);
+                return true;
             }
             else
             {
-                groups.Add(password, 1);
-            }  
+                if (!groups.ContainsKey(password) || groups[password] > 2)
+                {
+                    return false;
+                }
+                else
+                {
+                    User usr = new User();
+                    usr.ConnectionID = connID;
+                    usr.ConnectedOn = DateTime.Now;
+                    usr.Name = name;
+                    usr.password = password;
+                    Users.Add(usr);
+                    groups[password]++;
+                    return true;
+                }
+            }
         }
+
+        public bool IsReady(string password)
+        {
+            if (groups[password] == 2)
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         public bool FindGroup(string password)
         {

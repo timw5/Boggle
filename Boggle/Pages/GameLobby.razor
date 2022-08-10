@@ -7,7 +7,7 @@
 
 <h3>GameLobby</h3>
 <h1>  @passcode</h1>
-<button @onclick="click" class="btn btn-primary @disabled"> connstring</button>
+<button @onclick="click" class="btn btn-primary @disabled"> StartGame</button>
 
 
 
@@ -18,18 +18,61 @@
     string passcode = "";
     HubConnection? hub;
 
-    protected override async Task OnInitializedAsync() {
 
+    protected override async Task OnInitializedAsync() {
+        
         passcode = usr.password;
+
+        if(await Task.Run(() => usr.hub.InvokeAsync<bool>("IsReady", usr.password)))
+        {
+            disabled = "";
+        }
+        else
+        {
+            wait();
+        }
 
         await base.OnInitializedAsync();
     }
 
+    public async void wait()
+    {
+        Thread.Sleep(5000);
+        if(await Task.Run(() => usr.hub.InvokeAsync<bool>("IsReady", usr.password)))
+        {
+            disabled = "";
+            StateHasChanged();
+        }
+        else
+        {
+            wait();
+            StateHasChanged();
+        }
+    }
+    
+
     public async void click()
     {
-        await js.InvokeVoidAsync("alert", (string)await usr.hub.InvokeAsync<string>("GetConnectionID"));
+        await Task.Run(() => usr.hub.InvokeAsync("ImReady", usr.Name));
+        string jscall = $"console.log";
+        await js.InvokeVoidAsync(jscall, usr.Name);
+        Ready();
+
     }
 
+    public async void Ready()
+    {
+        bool test = await Task.Run(() => usr.hub.InvokeAsync<bool>("ready", usr.password, usr.Name));
+        if (test)
+        {
+            navman.NavigateTo("/Game");
+        }
+        else
+        {
+            Thread.Sleep(2000);
+            Ready();
+        }
+    }
 
 
 

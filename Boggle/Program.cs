@@ -8,9 +8,9 @@ using Boggle.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<User>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<User>();
 builder.Services.AddDbContextFactory<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db"))
 );

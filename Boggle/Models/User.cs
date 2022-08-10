@@ -7,6 +7,7 @@ namespace Boggle.Models
         public User() 
         {
             ConnectedOn = DateTime.Now;
+            ready = false;
         }
     
         public User(string connectionID, string name)
@@ -22,6 +23,7 @@ namespace Boggle.Models
         public HubConnection? hub { get; set; }
         public string? password { get; set; }
         public string? GroupName { get; set; }
+        public bool ready { get; set; }
 
 
     }
