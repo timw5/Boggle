@@ -79,14 +79,13 @@
     public static System.Timers.Timer aTimer;
     public int counter = 30;
 
-    public void StartTimer()
+    public async void StartTimer()
     {
-        aTimer = new System.Timers.Timer(1000);
         aTimer.Elapsed += CountDownTimer;
         aTimer.Enabled = true;
     }
 
-    public void CountDownTimer(Object source, ElapsedEventArgs e)
+    public async void CountDownTimer(Object source, ElapsedEventArgs e)
     {
         if (counter > 0)
         {
@@ -96,11 +95,14 @@
         {
             usr.IsGameFinished = true;
             aTimer.Enabled = false;
-            navman.NavigateTo("/GameLobby");
-
+            await InvokeAsync(StateHasChanged);
 
         }
-        InvokeAsync(StateHasChanged);
+        if (counter == 0) {
+            usr.IsGameFinished = true;
+            navman.NavigateTo("/GameLobby");
+        }
+        await InvokeAsync(StateHasChanged);
     }
 
 
@@ -132,6 +134,7 @@
 
         await base.OnInitializedAsync();
         DateTime t = DateTime.Now;
+        aTimer = new System.Timers.Timer(1000);
         StartTimer();
 
     }
