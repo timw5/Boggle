@@ -100,7 +100,6 @@ namespace Boggle.Hubs
             return false;
         }
 
-
         public bool FindGroup(string password)
         {
             if (groups.ContainsKey(password))

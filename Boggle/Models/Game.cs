@@ -33,7 +33,6 @@ namespace Boggle.Models
             {
                 Winner = Players[1];
             }
-
         }
 
         public static int AddScore(string word)
