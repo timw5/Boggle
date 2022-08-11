@@ -5,7 +5,7 @@ namespace Boggle.Hubs
 {
     public class BoggleHub : Hub
     {
-        private static List<Game> Games = new List<Game>();
+        private static Dictionary<string, Game> Games = new Dictionary<string, Game>();
         private static List<Boggle.Models.User> Users = new List<User>();
         private static Dictionary<string, int> groups = new Dictionary<string, int>();
         private static sliceofbreadContext? sliceofbreadContext;
@@ -31,10 +31,31 @@ namespace Boggle.Hubs
             return mydict;
         }
         
+        public string FindWinner(string password)
+        {
+            var temp = Games[password];
+            if (temp.Players[0].score > temp.Players[1].score)
+            {
+                return temp.Players[0].Name;
+            }
+            else return temp.Players[1].Name;      
+        }
+
+        
+        
         public void ImReady(string name)
         {
             Users.Where(x => x.Name == name).FirstOrDefault().ready = true;
         }
+        
+        public void addWord(string name, string password, string word)
+        {
+            var temp = Users.Where(x => x.Name == name).FirstOrDefault();
+            temp.GuessedWords.Add(word);
+            temp.score += Games[password].AddScore(word);
+
+        }
+
         
         
         public bool ready(string password, string name)
@@ -61,6 +82,7 @@ namespace Boggle.Hubs
 
             if (!joining)
             {
+                Game g = new Game();
                 User usr = new User();
                 usr.ConnectionID = connID;
                 usr.ConnectedOn = DateTime.Now;
@@ -68,6 +90,9 @@ namespace Boggle.Hubs
                 usr.password = password;
                 Users.Add(usr);
                 groups.Add(password, 1);
+                g.Players.Add(usr);
+                g.GroupName = password;
+                Games.Add(password, g);
                 Groups.AddToGroupAsync(connID, password);
                 return true;
             }
@@ -78,13 +103,14 @@ namespace Boggle.Hubs
                     return false;
                 }
                 else
-                {
+                { 
                     User usr = new User();
                     usr.ConnectionID = connID;
                     usr.ConnectedOn = DateTime.Now;
                     usr.Name = name;
                     usr.password = password;
                     Users.Add(usr);
+                    Games[password].Players.Add(usr);
                     groups[password]++;
                     return true;
                 }

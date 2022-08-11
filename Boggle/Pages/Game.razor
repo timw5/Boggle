@@ -1,8 +1,11 @@
 ﻿@page "/Game"
 @using Microsoft.AspNetCore.SignalR.Client
+@using System.Threading
+@using System.Timers
 @inject NavigationManager navman
 @inject IJSRuntime js
 @inject User usr
+@inject Board b
 @implements IDisposable
 @inject IDbContextFactory<sliceofbreadContext> dbFactory
 
@@ -13,20 +16,28 @@
         <div class="board">
         <section id="dice-grid">
             <div class="dice">
+                @if(dict.Count > 15){
+                    Count = 0;
+                }
                 @foreach (var row in b.BoggleBoard)
                 {
-                    @foreach(var item in row)
+                    @foreach (var item in row)
                     {
                         //callback event: "btnClick(item)"
                         //void: "() => btnClick(item)"
-                        string id = item + Count++.ToString();
-                        if(!dict.Keys.Contains(id))
-                        {
-                            dict.Add(id, false);
-                        }
-                        <button @onclick="() => btnClick(id)" id="@id" class="letter" value="@item">@item</button>
-                    }  
+                            string id = item + Count++.ToString();
+                            if (!dict.Keys.Contains(id))
+                            {
+                                if(dict.Count < 16) {
+                                    dict.Add(id, false);
+                                }
+
+                            }
+                            <button @onclick="() => btnClick(id)" id="@id" class="letter" value="@item">@item</button>
+                        
+                    }
                 }
+                
             </div>
         </section>
 
@@ -36,7 +47,7 @@
                 <div>Opponent's Score:</div>
                 <div>0</div>
                 <br />
-                <div class="time">Time Remaining:</div>
+                <div class="time">@counter</div>
                 <div class="time">60</div>
             </div>
         </div>
@@ -48,28 +59,67 @@
             </div>
             <button id="submit-btn">Submit Word</button>
         </section>
+    <div class="container">
         <table id="score-table">
             <tr>
-                <th>Word</th>
-                <th>Score</th>
+                <td>@CurrWordSelected</td>
+                <td>@CurrScore</td>
             </tr>
             <tr>
                 <td>Total:</td>
-                <td id="total-points">0</td>
+            <td id="total-points">@score</td>
             </tr>
         </table>
+    </div>
     </section>
     
 @code {
+    int score = 0;
+    int CurrScore = 0;
+    public static System.Timers.Timer aTimer;
+    public int counter = 30;
+
+    public void StartTimer()
+    {
+        aTimer = new System.Timers.Timer(1000);
+        aTimer.Elapsed += CountDownTimer;
+        aTimer.Enabled = true;
+    }
+
+    public void CountDownTimer(Object source, ElapsedEventArgs e)
+    {
+        if (counter > 0)
+        {
+            counter -= 1;
+        }
+        else
+        {
+            usr.IsGameFinished = true;
+            aTimer.Enabled = false;
+            navman.NavigateTo("/GameLobby");
+
+
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
 
     public void Dispose()
     {
         Context?.Dispose();
     }
 
+
+    public void FindWinner() 
+    {
+
+    }
+
     protected override async Task OnInitializedAsync()
     {
         dict.Clear();
+        g = new Models.Game();
+        Count = 0;
         Busy = true;
         try
         {
@@ -79,17 +129,23 @@
         {
             Busy = false;
         }
+
         await base.OnInitializedAsync();
-        g = new(new GameSetup("123",10), Context);//for testing
+        DateTime t = DateTime.Now;
+        StartTimer();
+
     }
 
     bool Busy;
-    Board b = new Board();
     sliceofbreadContext? Context;
     Models.Game? g;
     public string CurrWordSelected = "";
     public Dictionary<string, bool> dict = new();
+    public Dictionary<string, bool> dictCopy = new();
+
     int Count = 0;
+
+    List<List<char>> board;
 
     List<List<bool>> ValidPositions = new List<List<bool>>//a 2d array of booleans to keep track of valid positions
     {
@@ -107,6 +163,8 @@
         [3] = new List<int> { 12, 13, 14, 15 },
     };
 
+
+
     public async void btnClick(string a)
     {
         //ID is in the form: "{letter}{int}"
@@ -117,9 +175,17 @@
         {
             if (dict[a] is true)
             {
-                if (await Task<bool>.Run(() => g.IsWord(CurrWordSelected)))
+                if (await Task<bool>.Run(() => Models.Game.IsWord(CurrWordSelected, Context)))
                 {
-                    Models.Game.AddScore(CurrWordSelected);
+                    if(!usr.GuessedWords.Contains(CurrWordSelected))
+                    {
+                        CurrScore = Models.Game.AddScores(CurrWordSelected);
+                        usr.score += CurrScore;
+                        usr.hub.InvokeAsync("addWord", usr.Name, usr.password, CurrWordSelected);
+                        usr.GuessedWords.Add(CurrWordSelected);
+                        score += CurrScore;
+                    }
+
                     CurrWordSelected = "";
                     foreach (var item in dict.Keys)
                     {
@@ -162,10 +228,9 @@
         {
             return true;
         }
-
         int y = (int)(val / 4);
         int x = ids[y].FindIndex(x => x == val);
-        
+
         if(CurrWordSelected.Length == 0)
         {
             ValidPositions[x][y] = true;
