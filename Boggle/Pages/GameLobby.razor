@@ -20,13 +20,15 @@
     </thead>
     <tbody>
 
-@if( usr.GuessedWords.Count > 0) {
-    foreach(var item in usr.GuessedWords) {
-                <tr>
-                    <td>@item</td>
-                </tr>
+    @if( usr.GuessedWords.Count > 0) 
+    {
+        foreach(var item in usr.GuessedWords) 
+        {
+            <tr>
+                <td>@item</td>
+            </tr>
+        }
     }
-}
     </tbody>
 </table>
 <button @onclick="@waitToRedirect" class=" btn btn-danger @winnerdisabled">End Game</button>
@@ -38,10 +40,10 @@
 
     public string disabled = "disabled";
     string passcode = "";
-    HubConnection? hub;
     string winner = "";
     string winnerdisabled = "invisible";
     string wonstatus = "";
+    HubConnection? hub;
     List<List<char>> board = new List<List<char>>();
 
 
@@ -50,15 +52,12 @@
         {
             passcode = usr.password;
         }
-
-        b = new Board();
-        board = b.BoggleBoard;
-        usr.board = board;
+        usr.board = b.BoggleBoard;
         if (usr.IsGameFinished)
         {
+            winner = await Task.Run(() => usr.hub.InvokeAsync<string>("FindWinner", usr.password));
             if (usr.hub != null)
             {
-                await Task.Delay(1000);
                 winnerdisabled = "visible";
             }
             if (usr.Name != winner) {
@@ -82,22 +81,20 @@
                 }
             }
         }
-
-
         await base.OnInitializedAsync();
     }
 
 
 
-    public async void waitToRedirect() {
+    public async void waitToRedirect() 
+    {
 
         Task.WaitAll();
         await usr.hub.InvokeAsync("endgame", usr.password, usr.Name);
         this.usr.hub = null;
         this.usr = null;
         this.usr = new User();
-        b = null;
-        b = new Board();
+        b.ResetBoard();
         navman.NavigateTo("/", true);
     }
 

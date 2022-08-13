@@ -10,6 +10,7 @@ namespace Boggle.Models
             ready = false;
             GuessedWords = new();
             IsGameFinished = false;
+            counter = 30;
         }
     
         public User(string connectionID, string name)
@@ -20,6 +21,7 @@ namespace Boggle.Models
             IsGameFinished = false;
         }
 
+        public int counter { get; set; }
         public string? ConnectionID { get; set; }
         public string? Name { get; set; }
         public DateTime ConnectedOn { get; set; }
@@ -31,7 +33,6 @@ namespace Boggle.Models
         public List<string> GuessedWords { get; set; }
         public int? score { get; set; }
         public List<List<char>>? board;
-
 
     }
 }

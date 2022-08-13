@@ -4,6 +4,11 @@
     {
         public Board()
         {
+            FillBoard();
+        }
+
+        public void FillBoard()
+        {
             row1 = fillRow();
             row2 = fillRow();
             row3 = fillRow();
@@ -101,6 +106,24 @@
 
             row = temp.ToList();
             return row;
+        }
+
+        public void ResetBoard()
+        {
+            foreach(var item in Vowels.Keys)
+            {
+                Vowels[item] = 0;
+            }
+            foreach(var item in Constants.Keys)
+            {
+                Constants[item] = 0;
+            }
+            row1.Clear();
+            row2.Clear();
+            row3.Clear();
+            row4.Clear();
+            BoggleBoard.Clear();
+            FillBoard();
         }
     }
 }

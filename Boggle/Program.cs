@@ -9,8 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<User>();
-builder.Services.AddSingleton<Board>();
+builder.Services.AddSingleton(config=>
+{
+    return new Board();
+    
+});
 builder.Services.AddRazorPages();
+builder.Services.AddTransient(config=>
+{
+    var blazorTimer = new BlazorTimer();
+    blazorTimer.SetTimer(1000);
+    return blazorTimer;
+});
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContextFactory<sliceofbreadContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("db"))

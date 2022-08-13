@@ -5,165 +5,69 @@
 @inject NavigationManager navman
 @inject IJSRuntime js
 @inject User usr
+@inject BlazorTimer Timer
 @inject Board b
 @implements IDisposable
 @inject IDbContextFactory<sliceofbreadContext> dbFactory
 
-    <section id="game" class="container">
-    <div class="top">
-        <h1>Time Remaining: @counter </h1>
-    </div>
+    <section id="game" class="container w-100">
+        <div class="top container mx-auto text-center">
+            <h1>Time Remaining: @{
+                    usr.counter = counter / 2;
+                } @usr.counter </h1>
+        </div>
         <header>
             <h3>Boggle</h3>
         </header>      
-        <div class="board">
-        <section id="dice-grid">
-            <div class="dice">
-                @if(dict.Count > 15){
-                    Count = 0;
-                }
-                @foreach (var row in b.BoggleBoard)
-                {
-                    @foreach (var item in row)
+        <div class="board container w-100 mx-auto">
+            <section id="dice-grid">
+                <div class="dice">
+                    @if(dict.Count > 15){
+                        Count = 0;
+                    }
+                    @foreach (var row in b.BoggleBoard)
                     {
-                        //callback event: "btnClick(item)"
-                        //void: "() => btnClick(item)"
+                        @foreach (var item in row)
+                        {
                             string id = item + Count++.ToString();
                             if (!dict.Keys.Contains(id))
                             {
-                                if(dict.Count < 16) {
+                                if(dict.Count < 16) 
+                                {
                                     dict.Add(id, false);
                                 }
-
                             }
-                            <button @onclick="() => btnClick(id)" id="@id" class="letter" value="@item">@item</button>
-                        
-                    }
-                }
-                
-            </div>
-        </section>
-
-
+                            <button @onclick="() => btnClick(id)" id="@id" class="letter" value="@item">@item</button> 
+                        }
+                    }  
+                </div>
+            </section>
         </div>
-    <div class="container">
-        <table id="score-table">
-            <tr>
-                <td>@CurrWordSelected</td>
-                <td>@CurrScore</td>
-            </tr>
-            <tr>
-                <td>Total:</td>
-            <td id="total-points">@score</td>
-            </tr>
-        </table>
-    </div>
+        <div class="container w-100 mx-auto">
+            <table id="score-table">
+                <tr>
+                    <td>@CurrWordSelected</td>
+                    <td>@CurrScore</td>
+                </tr>
+                <tr>
+                    <td>Total:</td>
+                <td id="total-points">@score</td>
+                </tr>
+            </table>
+        </div>
     </section>
     
 @code {
     int score = 0;
     int CurrScore = 0;
-    public static System.Timers.Timer aTimer;
-    public int counter = 30;
-
-    public void StartTimer()
-    {
-        aTimer.Elapsed += CountDownTimer;
-        aTimer.Enabled = true;
-    }
-
-    public async void CountDownTimer(Object source, ElapsedEventArgs e)
-    {
-        if (counter > 0)
-        {
-            counter -= 1;
-        }
-        else
-        {
-            usr.IsGameFinished = true;
-            //aTimer.Enabled = false;
-            await InvokeAsync(StateHasChanged);
-
-        }
-        if (counter == 0) {
-            await Task.Delay(1000);
-            usr.IsGameFinished = true;
-            if(aTimer is not null) {
-                aTimer.Dispose();
-            }
-            if(Context is not null) {
-                this.Dispose();
-            }
-            navman.NavigateTo("/GameLobby");
-        }
-        await InvokeAsync(StateHasChanged);
-    }
-
-
-    public void Dispose()
-    {
-        Context?.Dispose();
-    }
-
-
-    public void FindWinner() 
-    {
-
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        dict.Clear();
-        g = new Models.Game();
-        Count = 0;
-        Busy = true;
-        try
-        {
-            Context = dbFactory.CreateDbContext();
-        }
-        finally
-        {
-            Busy = false;
-        }
-
-        await base.OnInitializedAsync();
-        counter = 30;
-        aTimer = new System.Timers.Timer(1000);
-        StartTimer();
-    }
-
-    protected override void OnInitialized()
-    {
-        dict.Clear();
-        g = new Models.Game();
-        Count = 0;
-        Busy = true;
-        try
-        {
-            Context = dbFactory.CreateDbContext();
-        }
-        finally
-        {
-            Busy = false;
-        }
-
-        counter = 30;
-        aTimer = new System.Timers.Timer(1000);
-        StartTimer();
-        base.OnInitialized();
-    }
-
-    bool Busy;
+    int Count = 0;
+    public int counter = 60;
     sliceofbreadContext? Context;
     Models.Game? g;
     public string CurrWordSelected = "";
     public Dictionary<string, bool> dict = new();
     public Dictionary<string, bool> dictCopy = new();
-
-    int Count = 0;
-
     List<List<char>> board;
-
     List<List<bool>> ValidPositions = new List<List<bool>>//a 2d array of booleans to keep track of valid positions
     {
         new List<bool> {false, false, false, false },
@@ -171,15 +75,65 @@
         new List<bool> {false, false, false, false },
         new List<bool> {false, false, false, false }
     };
-
     Dictionary<int, List<int>> ids = new Dictionary<int, List<int>>//a 2d array to map ID's
     {
-        [0] = new List<int> { 0,  1,  2,  3  },
-        [1] = new List<int> { 4,  5,  6,  7  },
-        [2] = new List<int> { 8,  9,  10, 11 },
+        [0] = new List<int> { 0, 1, 2, 3 },
+        [1] = new List<int> { 4, 5, 6, 7 },
+        [2] = new List<int> { 8, 9, 10, 11 },
         [3] = new List<int> { 12, 13, 14, 15 },
     };
 
+
+    private void NotifyTimerElapsed()
+    {
+        if(usr.counter > 0) 
+        {
+
+            InvokeAsync(() => { counter--; StateHasChanged(); });
+
+        }
+        else
+        {
+            usr.IsGameFinished = true;
+            Task.Delay(500).Wait();
+            usr.IsGameFinished = true;
+            if (Context is not null)
+            {
+                this.Dispose();
+            }
+            navman.NavigateTo("/GameLobby");
+        }
+    }
+
+    public void Dispose()
+    {
+        if(Context is not null) 
+        {
+            Context?.Dispose();
+            Context = null;
+        }
+        if(Timer is not null) 
+        {
+            Timer.OnElapsed -= NotifyTimerElapsed;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        dict.Clear();
+        g = new Models.Game();
+        Count = 0;
+        Context = dbFactory.CreateDbContext();
+        counter = 60;
+        Timer.OnElapsed += NotifyTimerElapsed;
+        await base.OnInitializedAsync();
+
+    }
+
+    protected override void OnInitialized()
+    {
+        OnInitializedAsync().Wait();
+    }
 
 
     public async void btnClick(string a)

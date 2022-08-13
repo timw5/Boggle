@@ -41,8 +41,6 @@ namespace Boggle.Hubs
             else return temp[1].Name;      
         }
 
-        
-        
         public void ImReady(string name)
         {
             Users.Where(x => x.Name == name).FirstOrDefault().ready = true;
@@ -53,8 +51,6 @@ namespace Boggle.Hubs
             Users.Where(x => x.Name == name).FirstOrDefault().score += Games[password].AddScore(word);
             Users.Where(x => x.Name == name).FirstOrDefault().GuessedWords.Add(word);
         }
-
-
 
         public bool ready(string password, string name)
         {
@@ -123,7 +119,6 @@ namespace Boggle.Hubs
             }
             return false;
         }
-
 
         public bool FindGroup(string password)
         {
