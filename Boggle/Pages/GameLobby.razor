@@ -4,7 +4,6 @@
 @inject User usr
 @inject Board b
 @inject IJSRuntime js
-@inject IDbContextFactory<sliceofbreadContext> dbFactory
 
 <h3>GameLobby</h3>
 <h1>  @passcode</h1>
@@ -12,7 +11,6 @@
 <br />
 <br />
 <h2 class="@winnerdisabled">@wonstatus</h2>
-<h2 class="@winnerdisabled">Winner is: @winner</h2>
 
 <table class="table @winnerdisabled">
     <thead>
@@ -31,13 +29,13 @@
 }
     </tbody>
 </table>
+<button @onclick="@waitToRedirect" class=" btn btn-danger @winnerdisabled">End Game</button>
 
 
 
 
 @code {
 
-    public sliceofbreadContext? Context;
     public string disabled = "disabled";
     string passcode = "";
     HubConnection? hub;
@@ -60,14 +58,14 @@
         {
             if (usr.hub != null)
             {
-                winner = await Task.Run(() => usr.hub.InvokeAsync<string>("FindWinner", usr.password));
+                await Task.Delay(1000);
                 winnerdisabled = "visible";
             }
             if (usr.Name != winner) {
-                wonstatus = "You Lost!";
+                wonstatus = "You Won!";
             }
             else {
-                wonstatus = "You Won!";
+                wonstatus = "You Lost!";
             }
         }
         else
@@ -80,7 +78,7 @@
                 }
                 else
                 {
-                    wait();
+                    wait(1);
                 }
             }
         }
@@ -89,20 +87,43 @@
         await base.OnInitializedAsync();
     }
 
-    public async void wait()
+
+
+    public async void waitToRedirect() {
+
+        Task.WaitAll();
+        await usr.hub.InvokeAsync("endgame", usr.password, usr.Name);
+        this.usr.hub = null;
+        this.usr = null;
+        this.usr = new User();
+        b = null;
+        b = new Board();
+        navman.NavigateTo("/", true);
+    }
+
+    public async void wait(int count)
     {
+        if (count > 10)
+        {
+            navman.NavigateTo("/");
+            await js.InvokeVoidAsync("location.reload()");
+            
+        }
         if (usr.hub != null)
         {
-            Thread.Sleep(5000);
             if (await Task.Run(() => usr.hub.InvokeAsync<bool>("IsReady", usr.password)))
             {
                 disabled = "";
                 StateHasChanged();
+                return;
             }
             else
             {
-                wait();
+                Thread.Sleep(5000);
+
+                wait(count++);
                 StateHasChanged();
+                return;
             }
         }
     }
@@ -128,10 +149,11 @@
             if (test)
             {
                 navman.NavigateTo("/Game");
+                return;
             }
             else
             {
-                Thread.Sleep(2000);
+                await Task.Delay(100);
                 Ready();
             }
         }

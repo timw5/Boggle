@@ -22,42 +22,17 @@ namespace Boggle.Models
 
         public int AddScore(string word)
         {
-            int length = word.Length;
-            
-            if (length == 3)
-            {
-                return 1;
-            }
-            else if(length == 4)
-            {
-                return 2;
-            }
-            else if (length == 5)
-            {
-                return 4;
-            }
-            else if (length == 6)
-            {
-                return 6;
-            }
-            else if (length == 7)
-            {
-                return 8;
-            }
-            else if (length == 8)
-            {
-                return 10;
-            }
-            else
-            {
-                return 15;
-            }
+            return AddScores(word);
         }
 
         public static int AddScores(string word)
         {
             int length = word.Length;
 
+            if (length < 3)
+            {
+                return 0;
+            }
             if (length == 3)
             {
                 return 1;

@@ -33,12 +33,12 @@ namespace Boggle.Hubs
         
         public string FindWinner(string password)
         {
-            var temp = Games[password];
-            if (temp.Players[0].score > temp.Players[1].score)
+            var temp = Users.Where(x => x.password == password).ToList();
+            if (temp[0].score > temp[1].score)
             {
-                return temp.Players[0].Name;
+                return temp[0].Name;
             }
-            else return temp.Players[1].Name;      
+            else return temp[1].Name;      
         }
 
         
@@ -50,14 +50,12 @@ namespace Boggle.Hubs
         
         public void addWord(string name, string password, string word)
         {
-            var temp = Users.Where(x => x.Name == name).FirstOrDefault();
-            temp.GuessedWords.Add(word);
-            temp.score += Games[password].AddScore(word);
-
+            Users.Where(x => x.Name == name).FirstOrDefault().score += Games[password].AddScore(word);
+            Users.Where(x => x.Name == name).FirstOrDefault().GuessedWords.Add(word);
         }
 
-        
-        
+
+
         public bool ready(string password, string name)
         {
             int count = 0;
@@ -152,6 +150,26 @@ namespace Boggle.Hubs
             return password;
         }
 
+
+        public async void endgame(string pass, string name) 
+        {
+            var usr = Users.FirstOrDefault(x => x.Name == name);
+            if(usr is not null)
+            {
+                await Groups.RemoveFromGroupAsync(usr.ConnectionID, pass);
+                Users.Remove(usr);
+            }
+            if (Games.Keys.Contains(pass))
+            {
+                Games.Remove(pass);
+            }
+            this.Dispose(true);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
 
     }
 }

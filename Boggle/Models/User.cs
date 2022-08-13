@@ -9,6 +9,7 @@ namespace Boggle.Models
             ConnectedOn = DateTime.Now;
             ready = false;
             GuessedWords = new();
+            IsGameFinished = false;
         }
     
         public User(string connectionID, string name)
